@@ -7,7 +7,7 @@
 ## 01 数据结构
 ### 树状数组
 ```cpp
-struct Fenwick{
+struct Fenwick{ //单点加，区间查
   int n;vector<ll> tr;
   Fenwick(int _n):n(_n),tr(_n+1){}
   void add(int x,ll v){for(;x<=n;x+=x&-x)tr[x]+=v;}
