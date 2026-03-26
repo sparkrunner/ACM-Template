@@ -1,4 +1,4 @@
-name: Generate PDF
+name: 自动合并+生成PDF
 on: push
 
 jobs:
@@ -6,12 +6,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: MD to PDF
+
+      - name: 合并所有板子文件
+        run: |
+          # 清空并创建新的Print.md
+          echo "# ACM模板" > Print.md
+          echo "---" >> Print.md
+          # 按分类自动合并
+          echo -e "\n## 00 基础" >> Print.md
+          cat 00_Basic/*.md >> Print.md
+          echo -e "\n---\n## 01 数据结构" >> Print.md
+          cat 01_DataStructure/*.md >> Print.md
+          echo -e "\n---\n## 02 图论" >> Print.md
+          cat 02_Graph/*.md >> Print.md
+          echo -e "\n---\n## 03 数论" >> Print.md
+          cat 03_Math/*.md >> Print.md
+          echo -e "\n---\n## 04 字符串" >> Print.md
+          cat 04_String/*.md >> Print.md
+
+      # 转PDF
+      - name: MD转PDF
         uses: BaileyJM02/markdown-to-pdf@v1
         with:
           input_path: Print.md
           output_path: Print.pdf
-      - name: Upload
+
+      # 上传PDF
+      - name: 上传PDF文件
         uses: actions/upload-artifact@v4
         with:
           name: ACM-Template-PDF
