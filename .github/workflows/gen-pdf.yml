@@ -1,0 +1,18 @@
+name: Generate PDF
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: MD to PDF
+        uses: BaileyJM02/markdown-to-pdf@v1
+        with:
+          input_path: Print.md
+          output_path: Print.pdf
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ACM-Template-PDF
+          path: Print.pdf
