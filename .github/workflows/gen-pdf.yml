@@ -1,38 +1,58 @@
-name: 自动合并+生成PDF
+name: 自动合并+生成PDF+提交Print.md
 on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: 合并所有板子文件
+      # 1. 自动合并所有 md → Print.md
+      - name: 合并所有模板
         run: |
-          # 清空并创建新的Print.md
-          echo "# ACM模板" > Print.md
+          set -e
+          echo "# ACM 竞赛模板" > Print.md
           echo "---" >> Print.md
-          # 按分类自动合并
-          echo -e "\n## 00 基础" >> Print.md
-          cat 00_Basic/*.md >> Print.md
-          echo -e "\n---\n## 01 数据结构" >> Print.md
-          cat 01_DataStructure/*.md >> Print.md
-          echo -e "\n---\n## 02 图论" >> Print.md
-          cat 02_Graph/*.md >> Print.md
-          echo -e "\n---\n## 03 数论" >> Print.md
-          cat 03_Math/*.md >> Print.md
-          echo -e "\n---\n## 04 字符串" >> Print.md
-          cat 04_String/*.md >> Print.md
 
-      # 转PDF
-      - name: MD转PDF
+          echo -e "\n## 00 基础" >> Print.md
+          cat 00_Basic/*.md 2>/dev/null >> Print.md || true
+
+          echo -e "\n---\n## 01 数据结构" >> Print.md
+          cat 01_DataStructure/*.md 2>/dev/null >> Print.md || true
+
+          echo -e "\n---\n## 02 图论" >> Print.md
+          cat 02_Graph/*.md 2>/dev/null >> Print.md || true
+
+          echo -e "\n---\n## 03 数论" >> Print.md
+          cat 03_Math/*.md 2>/dev/null >> Print.md || true
+
+          echo -e "\n---\n## 04 字符串" >> Print.md
+          cat 04_String/*.md 2>/dev/null >> Print.md || true
+
+      # 2. 把生成的 Print.md 提交回 GitHub 仓库
+      - name: 提交 Print.md
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "自动更新 Print.md"
+          add: "Print.md"
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. 转 PDF
+      - name: 转PDF
         uses: BaileyJM02/markdown-to-pdf@v1
         with:
           input_path: Print.md
           output_path: Print.pdf
 
-      # 上传PDF
-      - name: 上传PDF文件
+      # 4. 上传PDF
+      - name: 上传PDF
         uses: actions/upload-artifact@v4
         with:
           name: ACM-Template-PDF
