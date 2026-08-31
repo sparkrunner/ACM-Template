@@ -11,8 +11,39 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "shared",
-                "focus": true,
-                "echo": true
+                "focus": false,
+            },
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+
+        {
+            "label": "acm-make-run1",
+            "type": "shell",
+            "command": "make ${fileBasenameNoExtension}; ret=$?; if [ $ret -ne 2 ]; then ./${fileBasenameNoExtension} < in1; fi",
+            "args": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": false,
+            },
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+
+        {
+            "label": "acm-make-run2",
+            "type": "shell",
+            "command": "make ${fileBasenameNoExtension}; ret=$?; if [ $ret -ne 2 ]; then ./${fileBasenameNoExtension} < in2; fi",
+            "args": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": false,
             },
             "options": {
                 "cwd": "${fileDirname}"

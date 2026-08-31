@@ -5,5 +5,19 @@
         "command": "workbench.action.tasks.runTask",
         "when": "editorTextFocus",
         "args": "acm-make-run"
+    },
+
+    {
+        "key": "cmd+r 1",
+        "command": "workbench.action.tasks.runTask",
+        "when": "editorTextFocus",
+        "args": "acm-make-run1"
+    },
+
+    {
+        "key": "cmd+r 2",
+        "command": "workbench.action.tasks.runTask",
+        "when": "editorTextFocus",
+        "args": "acm-make-run2"
     }
 ]
