@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+const int N = 1e5 + 5;
+mt19937 gen(random_device{}());
+struct node {
+    int l;
+    int r;
+    int pri;
+    int val;
+    int siz;
+} tr[N];
+int cntn, root;
+
+inline int newnode(int v) {
+    cntn++;
+    tr[cntn] = {0, 0, (int)gen(), v, 1};
+    return cntn;
+}
+
+inline void push_up(int p) {
+    tr[p].siz = tr[tr[p].l].siz + tr[tr[p].r].siz + 1;
+}
+
+void split(int p, int v, int &x, int &y) {
+    if (!p) {
+        x = y = 0;
+        return ;
+    }
+    if (tr[p].val <= v) {
+        x = p;
+        split(tr[p].r, v, tr[x].r, y);
+    } else {
+        y = p;
+        split(tr[p].l, v, x, tr[y].l);
+    }
+    push_up(p);
+}
+
+int merge(int x, int y) {
+    if (!x || !y) return x + y;
+    if (tr[x].pri < tr[y].pri) {
+        tr[x].r = merge(tr[x].r, y);
+        push_up(x);
+        return x;
+    } else {
+        tr[y].l = merge(x, tr[y].l);
+        push_up(y);
+        return y;
+    }
+}
+
+void ins(int v) {
+    int x, y;
+    split(root, v, x, y);
+    int nw = newnode(v);
+    root = merge(merge(x, nw), y);
+}
+
+void del(int v) {
+    int x, y, z;
+    split(root, v, y, z);
+    split(y, v - 1, x, y);
+    y = merge(tr[y].l, tr[y].r);
+    root = merge(merge(x, y), z);
+}
+
+int kth(int p, int k) {
+    if (tr[tr[p].l].siz >= k) return kth(tr[p].l, k);
+    else if (k == tr[tr[p].l].siz + 1) return p;
+    else return kth(tr[p].r, k - tr[tr[p].l].siz - 1);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    cin >> n;
+    while (n--) {
+        int op, x;
+        cin >> op >> x;
+        if (op == 1) {
+            ins(x);
+        } else if (op == 2) {
+            del(x);
+        } else if (op == 3) {
+            int l, r;
+            split(root, x - 1, l, r);
+            cout << tr[l].siz + 1 << '\n';
+            root = merge(l, r);
+        } else if (op == 4) {
+            cout << tr[kth(root, x)].val << '\n';
+        } else if (op == 5) {
+            int l, r;
+            split(root, x - 1, l, r);
+            cout << tr[kth(l, tr[l].siz)].val << '\n';
+            root = merge(l, r);
+        } else if (op == 6) {
+            int l, r;
+            split(root, x, l, r);
+            cout << tr[kth(r, 1)].val << '\n';
+            root = merge(l, r);
+        }
+    }
+    return 0;
+}
